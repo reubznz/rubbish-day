@@ -1,0 +1,6 @@
+flask
+gunicorn
+requests
+urllib3
+datetime
+BeautifulSoup4
