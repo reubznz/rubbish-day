@@ -19,5 +19,5 @@ docker build . -t rubbish-day
 To launch the containerised app, run:
 
 ```bash
-docker run -d --name rubbish-day -p 5055:5050 --restart unless-stopped rubbish-day
+docker run -d --name rubbish-day -p 5050:5050 --restart unless-stopped rubbish-day
 ```
