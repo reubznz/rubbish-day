@@ -11,6 +11,6 @@ WORKDIR /app
 RUN useradd demo
 USER demo
 
-EXPOSE 5055
+EXPOSE 5050
 
 ENTRYPOINT ["bash", "/app/bin/run.sh"]
