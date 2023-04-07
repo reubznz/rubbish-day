@@ -61,6 +61,7 @@ def rubbish_day():
         exit(1)
 
     soup = BeautifulSoup(response.content, 'html.parser')
+    addressBlock = soup.find_all(attrs={'class': 'm-b-2'})
     cardBlock = soup.find_all(attrs={'class': 'card-block'})
     householdBlock = None
     for block in cardBlock :
@@ -85,7 +86,10 @@ def rubbish_day():
 
     # Current collection cycle
     output['value'] = links[0].find(attrs={'class':'m-r-1'}).string
-
+    
+    # Address details
+    output['address'] = addressBlock[0].string
+    
     # Create a timestamp from the date, assume 7am and NZT
     output['datetime'] = datetime.strptime(output['value']+datetime.now().astimezone().strftime(' 07 %Y %z'), '%A %d %B %H %Y %z').strftime('%Y-%m-%dT%H:%M:%S%z')
     recycleBlock = links[0].find(attrs={'class':'icon-recycle'})
