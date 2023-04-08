@@ -52,3 +52,7 @@ Add the following, customising the resource address:
 ```
 
 Restart Home Assistant to load the new sensor. Updates to the sensor configuration can then be done by reloading REST yaml.
+
+## Thanks to
+
+https://mark.douthwaite.io/getting-production-ready-a-minimal-flask-app/ & https://github.com/markdouthwaite/minimal-flask-api/tree/main/requirements
