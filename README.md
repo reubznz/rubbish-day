@@ -21,3 +21,27 @@ To launch the containerised app, run:
 ```bash
 docker run -d --name rubbish-day -p 5050:5050 --restart unless-stopped rubbish-day
 ```
+
+## Adding to `Home Assistant`
+
+Open `configuration.yaml`
+
+```
+- platform: rest
+  name: Rubbish Day
+  resource: http://ip.add.re.ss:5050/?addressid=12345678910
+  value_template: "{{ value_json.value }}"
+  json_attributes:
+    - address
+    - datetime
+    - collection_type
+    - icon
+    - next_collection_type
+    - next_collection_date
+    - next_collection_datetime
+    - next_collection_icon
+  scan_interval:
+    hours: 1
+```
+
+Restart Home Assistant to load the new sensor. Updates to the sensor configuration can then be done by reloading REST yaml.
