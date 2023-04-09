@@ -1,21 +1,38 @@
-from flask import Flask, request
+import logging
+from flask import Flask, request, redirect
 from werkzeug.middleware.proxy_fix import ProxyFix
+import json
+#import sys
+import requests
+import ssl
+import urllib3
+from datetime import datetime
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
 )
+app.logger.setLevel(logging.DEBUG)
 
 @app.route("/", methods=['GET'])
-def rubbish_day():
-    import sys
-    import json
-    import requests
-    import ssl
-    import urllib3
-    from datetime import datetime
-    from bs4 import BeautifulSoup
+def root():
+    return redirect("/status", code=302)
 
+@app.route("/status", methods=['GET'])
+def status():
+    scriptName = '/status'
+    app.logger.debug(scriptName+': testing debug log')
+    app.logger.warning(scriptName+': testing warning log')
+    app.logger.error(scriptName+': testing error log')
+    app.logger.info(scriptName+': testing info log')
+    output = {}
+    output['value'] = 'flask is running'
+    return json.dumps(output)
+
+@app.route("/rubbish-day", methods=['GET'])
+def rubbish_day():
+    scriptName = '/rubbish-day'
     class CustomHttpAdapter (requests.adapters.HTTPAdapter):
         # "Transport adapter" that allows us to use custom ssl_context.
 
@@ -40,29 +57,36 @@ def rubbish_day():
     requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
     # For debug output
-    from pathlib import Path
-    scriptName = str(Path(__file__).name)
-    debugmode = False
+    # Add '&debug' to url to log richer info in Flask logs
+    debugmode = request.args.get('debug')
+    if debugmode is None :
+        debugmode = False
+    else :
+        debugmode = True
 
     # Initialise strings to prevent errors later
-    # addressId = '12344871009'
+    output = {}
+    output['value'] = 'invalid addressid specified'
     addressId = request.args.get('addressid')
-    baseUrl = 'https://www.aucklandcouncil.govt.nz'
 
+    # Sanity check the addressid parameter
+    if addressId is None or len(addressId) != 11 :
+        return json.dumps(output)
+
+    baseUrl = 'https://www.aucklandcouncil.govt.nz'
     thisUrl = '/rubbish-recycling/rubbish-recycling-collections/Pages/collection-day-detail.aspx?an='+addressId
     url = baseUrl+thisUrl
-    if debugmode :
-        sys.stderr.write(scriptName+': Requesting page from '+thisUrl+'\n')
+    app.logger.debug(scriptName+': Scraping page from '+thisUrl)
     try:
         # response = requests.get(url), verify=False)
         response = get_legacy_session().get(url)
         if debugmode :
-            sys.stderr.write(scriptName+': > requests.get response code is '+str(response.status_code)+'\n')
+            app.logger.debug(scriptName+': > GET response code is '+str(response.status_code))
         response.raise_for_status()
     except requests.exceptions.RequestException as err:
-        sys.stderr.write(scriptName+': > Page GET says '+str(err)+'\n')
-        sys.stderr.write(scriptName+': > Error is fatal, exiting with no output\n')
-        exit(1)
+        app.logger.error(scriptName+': > Page GET says '+str(err))
+        app.logger.error(scriptName+': > Error is fatal, exiting with no output')
+        return json.dumps(output)
 
     soup = BeautifulSoup(response.content, 'html.parser')
     addressBlock = soup.find_all(attrs={'class': 'm-b-2'})
@@ -77,23 +101,22 @@ def rubbish_day():
             pass
     if householdBlock :
         if debugmode :
-            sys.stderr.write(scriptName+': > Found collection information\n')
+            app.logger.debug(scriptName+': > Found collection information')
     else :
-        sys.stderr.write(scriptName+': > Could not find collection information, exiting with no output\n')
-        exit(1)
+        app.logger.error(scriptName+': > Could not find collection information, exiting with no output')
+        return json.dumps(output)
 
-    output = {}
-
-    if debugmode :
-        sys.stderr.write(scriptName+': Straining information from soup\n')
     links = householdBlock.find_all(attrs={'class': 'links'})
 
     # Current collection cycle
     output['value'] = links[0].find(attrs={'class':'m-r-1'}).string
-    
+
     # Address details
     output['address'] = addressBlock[0].string
-    
+
+    # Debug attribute for visibility
+    output['debug'] = debugmode
+
     # Create a timestamp from the date, assume 7am and NZT
     output['datetime'] = datetime.strptime(output['value']+datetime.now().astimezone().strftime(' 07 %Y %z'), '%A %d %B %H %Y %z').strftime('%Y-%m-%dT%H:%M:%S%z')
     recycleBlock = links[0].find(attrs={'class':'icon-recycle'})
