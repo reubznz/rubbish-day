@@ -36,7 +36,7 @@ Add the following, customising the resource address:
 ```
 - platform: rest
   name: Rubbish Day
-  resource: http://ip.add.re.ss:5050/?addressid=12345678910
+  resource: http://ip.add.re.ss:5050/rubbish-day?addressid=12345678910
   value_template: "{{ value_json.value }}"
   json_attributes:
     - address
