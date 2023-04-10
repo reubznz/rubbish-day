@@ -139,5 +139,7 @@ def rubbish_day():
         output['next_collection_type'] = 'Rubbish'
         output['next_collection_icon'] = 'mdi:trash-can'
 
+    output['data_retrieved_datetime'] = datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
+
     # print(json.dumps(output))
     return json.dumps(output)
