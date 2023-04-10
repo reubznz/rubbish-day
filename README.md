@@ -23,7 +23,7 @@ docker build . -t rubbish-day
 To launch the container, run:
 
 ```bash
-docker run -d --name rubbish-day -p 5050:5050 --restart unless-stopped rubbish-day
+docker run -d --name rubbish-day -e TZ=Pacific/Auckland -p 5050:5050 --restart unless-stopped rubbish-day
 ```
 
 
