@@ -13,8 +13,15 @@ git clone https://github.com/reubznz/rubbish-day.git
 ## Running with `docker`
 
 Unsurprisingly, you'll need [Docker](https://www.docker.com) 
-installed to run this project with Docker. To build the container, 
-run:
+installed to run this project with Docker. 
+
+To launch the container, run:
+
+```bash
+docker run -d --name rubbish-day -e TZ=Pacific/Auckland -p 5050:5050 --restart unless-stopped ghcr.io/reubznz/rubbish-day
+```
+
+To manually build the container, run:
 
 ```bash
 docker build . -t rubbish-day
