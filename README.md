@@ -2,32 +2,32 @@
 
 `rubbish-day` is a container that runs a single python script that scrapes the Auckland Council website for data about your rubbish collection service. This data can then be consumed by Home Assistant.
 
-
-## Clone to local machine
-
-```
-git clone https://github.com/reubznz/rubbish-day.git
-```
-
-
 ## Running with `docker`
 
 Unsurprisingly, you'll need [Docker](https://www.docker.com) 
 installed to run this project with Docker. 
 
-To launch the container, run:
+### To launch the container, run:
 
 ```bash
 docker run -d --name rubbish-day -e TZ=Pacific/Auckland -p 5050:5050 --restart unless-stopped ghcr.io/reubznz/rubbish-day
 ```
 
-To manually build the container, run:
+## Build from source
+
+### Clone to local machine
+
+```
+git clone https://github.com/reubznz/rubbish-day.git
+```
+
+### To manually build the container, run:
 
 ```bash
 docker build . -t rubbish-day
 ```
 
-To launch the container, run:
+### To launch the container, run:
 
 ```bash
 docker run -d --name rubbish-day -e TZ=Pacific/Auckland -p 5050:5050 --restart unless-stopped rubbish-day
