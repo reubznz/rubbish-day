@@ -33,24 +33,24 @@ def status():
 @app.route("/rubbish-day", methods=['GET'])
 def rubbish_day():
     scriptName = '/rubbish-day'
-    class CustomHttpAdapter (requests.adapters.HTTPAdapter):
-        # "Transport adapter" that allows us to use custom ssl_context.
+    # class CustomHttpAdapter (requests.adapters.HTTPAdapter):
+    #     # "Transport adapter" that allows us to use custom ssl_context.
 
-        def __init__(self, ssl_context=None, **kwargs):
-            self.ssl_context = ssl_context
-            super().__init__(**kwargs)
+    #     def __init__(self, ssl_context=None, **kwargs):
+    #         self.ssl_context = ssl_context
+    #         super().__init__(**kwargs)
 
-        def init_poolmanager(self, connections, maxsize, block=False):
-            self.poolmanager = urllib3.poolmanager.PoolManager(
-                num_pools=connections, maxsize=maxsize,
-                block=block, ssl_context=self.ssl_context)
+    #     def init_poolmanager(self, connections, maxsize, block=False):
+    #         self.poolmanager = urllib3.poolmanager.PoolManager(
+    #             num_pools=connections, maxsize=maxsize,
+    #             block=block, ssl_context=self.ssl_context)
 
-    def get_legacy_session():
-        ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-        ctx.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
-        session = requests.session()
-        session.mount('https://', CustomHttpAdapter(ctx))
-        return session
+    # def get_legacy_session():
+    #     ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    #     ctx.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
+    #     session = requests.session()
+    #     session.mount('https://', CustomHttpAdapter(ctx))
+    #     return session
 
     # Suppress only the single warning from urllib3 needed.
     from urllib3.exceptions import InsecureRequestWarning
@@ -72,14 +72,16 @@ def rubbish_day():
     # Sanity check the addressid parameter
     if addressId is None or len(addressId) != 11 :
         return json.dumps(output)
-
+    httpheaders = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
+    }
     baseUrl = 'https://www.aucklandcouncil.govt.nz'
     thisUrl = '/rubbish-recycling/rubbish-recycling-collections/Pages/collection-day-detail.aspx?an='+addressId
     url = baseUrl+thisUrl
     app.logger.debug(scriptName+': Scraping page from '+thisUrl)
     try:
-        # response = requests.get(url), verify=False)
-        response = get_legacy_session().get(url)
+        response = requests.get(url, headers=httpheaders) #, verify=False)
+        # response = get_legacy_session().get(url)
         if debugmode :
             app.logger.debug(scriptName+': > GET response code is '+str(response.status_code))
         response.raise_for_status()
