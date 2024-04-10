@@ -138,6 +138,6 @@ def rubbish_day():
         if debugmode :
             sys.stderr.write("Rubbish"+'\n')
     
-    sys.stderr.write(scriptName+': Rubbish collection information successfully fetched\n')
+    # sys.stderr.write(scriptName+': Rubbish collection information successfully fetched\n')
     
     print(json.dumps(output))
