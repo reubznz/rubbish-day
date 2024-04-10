@@ -140,4 +140,4 @@ def rubbish_day():
     
     # sys.stderr.write(scriptName+': Rubbish collection information successfully fetched\n')
     
-    print(json.dumps(output))
+    return json.dumps(output)
