@@ -92,56 +92,52 @@ def rubbish_day():
 
     soup = BeautifulSoup(response.content, 'html.parser')
     addressBlock = soup.find_all(attrs={'class': 'm-b-2'})
-    cardBlock = soup.find_all(attrs={'class': 'card-block'})
-    householdBlock = None
-    for block in cardBlock :
-        try :
-            blockId = block['id']
-            if 'HouseholdBlock' in blockId :
-                householdBlock = block
-        except KeyError :
-            pass
-    if householdBlock :
-        if debugmode :
-            app.logger.debug(scriptName+': > Found collection information')
-    else :
-        app.logger.error(scriptName+': > Could not find collection information, exiting with no output')
-        return json.dumps(output)
-
-    links = householdBlock.find_all(attrs={'class': 'links'})
-
-    # Current collection cycle
-    output['value'] = links[0].find(attrs={'class':'m-r-1'}).string
-
-    # Address details
+    collectionInfo  = soup.find_all(attrs={'class': 'collectionDayDate'})
+    
+    rubbishInfo = collectionInfo[0]
+    foodscrapsInfo = collectionInfo[1]
+    recycleInfo = collectionInfo[2]
+    
+    # RUBBISH INFO
+    if debugmode :
+        sys.stderr.write("Rubbish: "+str(rubbishInfo)+'\n')
+    rubbishDate = rubbishInfo.find("strong").get_text()
+    if debugmode :
+        sys.stderr.write("       : "+str(rubbishDate)+'\n')
+    # FOODSCRAPS INFO
+    if debugmode :
+        sys.stderr.write("FoodScraps: "+str(foodscrapsInfo)+'\n')
+    foodscrapsDate = foodscrapsInfo.find("strong").get_text()
+    if debugmode :
+        sys.stderr.write("       : "+str(foodscrapsDate)+'\n')
+    # RECYCLE INFO
+    if debugmode :
+        sys.stderr.write("Recycle: "+str(recycleInfo)+'\n')
+    recycleDate = recycleInfo.find("strong").get_text()
+    if debugmode :
+        sys.stderr.write("       : "+str(recycleDate)+'\n')
+    
+    # ADDRESS INFO
+    if debugmode :
+        sys.stderr.write("Address: "+str(addressBlock[0].string)+'\n')
+    
+    output = {}
+    
+    output['datetime'] = datetime.strptime(rubbishDate+datetime.now().astimezone().strftime(' 07 %Y %z'), '%A %d %B %H %Y %z').strftime('%Y-%m-%dT%H:%M:%S%z')
     output['address'] = addressBlock[0].string
-
-    # Debug attribute for visibility
-    output['debug'] = debugmode
-
-    # Create a timestamp from the date, assume 7am and NZT
-    output['datetime'] = datetime.strptime(output['value']+datetime.now().astimezone().strftime(' 07 %Y %z'), '%A %d %B %H %Y %z').strftime('%Y-%m-%dT%H:%M:%S%z')
-    recycleBlock = links[0].find(attrs={'class':'icon-recycle'})
-    if recycleBlock :
+    output['data_retrieved_datetime'] = datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
+    
+    if rubbishDate == recycleDate:
         output['collection_type'] = 'Recycle'
         output['icon'] = 'mdi:recycle'
+        if debugmode :
+            sys.stderr.write("Rubbish and Recycling"+'\n')
     else :
         output['collection_type'] = 'Rubbish'
         output['icon'] = 'mdi:trash-can'
-
-    # Next collection cycle
-    recycleBlock = None
-    output['next_collection_date'] = links[1].find(attrs={'class':'m-r-1'}).string
-    output['next_collection_datetime'] = datetime.strptime(output['next_collection_date']+datetime.now().astimezone().strftime(' 07 %Y %z'), '%A %d %B %H %Y %z').strftime('%Y-%m-%dT%H:%M:%S%z')
-    recycleBlock = links[1].find(attrs={'class':'icon-recycle'})
-    if recycleBlock :
-        output['next_collection_type'] = 'Recycle'
-        output['next_collection_icon'] = 'mdi:recycle'
-    else :
-        output['next_collection_type'] = 'Rubbish'
-        output['next_collection_icon'] = 'mdi:trash-can'
-
-    output['data_retrieved_datetime'] = datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
-
-    # print(json.dumps(output))
-    return json.dumps(output)
+        if debugmode :
+            sys.stderr.write("Rubbish"+'\n')
+    
+    sys.stderr.write(scriptName+': Rubbish collection information successfully fetched\n')
+    
+    print(json.dumps(output))
