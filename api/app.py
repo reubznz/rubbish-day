@@ -128,11 +128,13 @@ def rubbish_day():
     output['data_retrieved_datetime'] = datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
     
     if rubbishDate == recycleDate:
+        output['value'] = recycleDate
         output['collection_type'] = 'Recycle'
         output['icon'] = 'mdi:recycle'
         if debugmode :
             sys.stderr.write("Rubbish and Recycling"+'\n')
     else :
+        output['value'] = rubbishDate
         output['collection_type'] = 'Rubbish'
         output['icon'] = 'mdi:trash-can'
         if debugmode :
