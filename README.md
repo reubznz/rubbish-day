@@ -21,7 +21,7 @@ docker run -d --name rubbish-day -e TZ=Pacific/Auckland -p 5050:5050 --restart u
 
 In [Home Assistant](https://www.home-assistant.io/), launch `Studio Code Server` and open `sensors.yaml` if you have it separated, or `configuration.yaml`.
 
-Add the following, customising the resource address:
+Add the following, customising the resource address and appending your Address ID:
 
 ```
 - platform: rest
@@ -33,10 +33,6 @@ Add the following, customising the resource address:
     - datetime
     - collection_type
     - icon
-    - next_collection_type
-    - next_collection_date
-    - next_collection_datetime
-    - next_collection_icon
     - data_retrieved_datetime
   scan_interval:
     hours: 1
