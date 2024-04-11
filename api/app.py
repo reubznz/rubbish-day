@@ -99,24 +99,21 @@ def rubbish_day():
     recycleInfo = collectionInfo[2]
     
     # RUBBISH INFO
-    if debugmode :
-        app.logger.debug(scriptName+": > INFO: Rubbish Collection info: "+str(rubbishInfo)+'\n')
     rubbishDate = rubbishInfo.find("strong").get_text()
     if debugmode :
+        app.logger.debug(scriptName+": > INFO: Rubbish Collection info: "+str(rubbishInfo)+'\n')
         app.logger.debug(scriptName+": > INFO: Next rubbish collection date is -  "+str(rubbishDate)+'\n')
     
     # FOODSCRAPS INFO
-    if debugmode :
-        app.logger.debug(scriptName+": > INFO: Foodscraps Collection info: "+str(foodscrapsInfo)+'\n')
     foodscrapsDate = foodscrapsInfo.find("strong").get_text()
     if debugmode :
+        app.logger.debug(scriptName+": > INFO: Foodscraps Collection info: "+str(foodscrapsInfo)+'\n')
         app.logger.debug(scriptName+": > INFO: Next foodscraps collection date is -  "+str(foodscrapsDate)+'\n')
     
     # RECYCLE INFO
-    if debugmode :
-        app.logger.debug(scriptName+": > INFO: Recycle Collection info: "+str(recycleInfo)+'\n')
     recycleDate = recycleInfo.find("strong").get_text()
     if debugmode :
+        app.logger.debug(scriptName+": > INFO: Recycle Collection info: "+str(recycleInfo)+'\n')
         app.logger.debug(scriptName+": > INFO: Next recycle collection date is "+str(recycleDate)+'\n')
     
     # ADDRESS INFO
@@ -133,14 +130,12 @@ def rubbish_day():
         output['value'] = recycleDate
         output['collection_type'] = 'Recycle'
         output['icon'] = 'mdi:recycle'
-        if debugmode :
-            app.logger.debug(scriptName+": > Collection type is Rubbish and Recycling"+'\n')
+        app.logger.debug(scriptName+": > Collection type is Rubbish and Recycling"+'\n')
     else :
         output['value'] = rubbishDate
         output['collection_type'] = 'Rubbish'
         output['icon'] = 'mdi:trash-can'
-        if debugmode :
-            app.logger.debug(scriptName+": > Collection type is Rubbish"+'\n')
+        app.logger.debug(scriptName+": > Collection type is Rubbish"+'\n')
     
     app.logger.debug(scriptName+': Rubbish collection information successfully fetched\n')
     return json.dumps(output)
