@@ -100,26 +100,28 @@ def rubbish_day():
     
     # RUBBISH INFO
     if debugmode :
-        sys.stderr.write("Rubbish: "+str(rubbishInfo)+'\n')
+        app.logger.debug(scriptName+": > INFO: Rubbish Collection info: "+str(rubbishInfo)+'\n')
     rubbishDate = rubbishInfo.find("strong").get_text()
     if debugmode :
-        sys.stderr.write("       : "+str(rubbishDate)+'\n')
+        app.logger.debug(scriptName+": > INFO: Next rubbish collection date is -  "+str(rubbishDate)+'\n')
+    
     # FOODSCRAPS INFO
     if debugmode :
-        sys.stderr.write("FoodScraps: "+str(foodscrapsInfo)+'\n')
+        app.logger.debug(scriptName+": > INFO: Foodscraps Collection info: "+str(foodscrapsInfo)+'\n')
     foodscrapsDate = foodscrapsInfo.find("strong").get_text()
     if debugmode :
-        sys.stderr.write("       : "+str(foodscrapsDate)+'\n')
+        app.logger.debug(scriptName+": > INFO: Next foodscraps collection date is -  "+str(foodscrapsDate)+'\n')
+    
     # RECYCLE INFO
     if debugmode :
-        sys.stderr.write("Recycle: "+str(recycleInfo)+'\n')
+        app.logger.debug(scriptName+": > INFO: Recycle Collection info: "+str(recycleInfo)+'\n')
     recycleDate = recycleInfo.find("strong").get_text()
     if debugmode :
-        sys.stderr.write("       : "+str(recycleDate)+'\n')
+        app.logger.debug(scriptName+": > INFO: Next recycle collection date is "+str(recycleDate)+'\n')
     
     # ADDRESS INFO
     if debugmode :
-        sys.stderr.write("Address: "+str(addressBlock[0].string)+'\n')
+        app.logger.debug(scriptName+": > INFO: Address is "+str(addressBlock[0].string)+'\n')
     
     output = {}
     
@@ -132,14 +134,13 @@ def rubbish_day():
         output['collection_type'] = 'Recycle'
         output['icon'] = 'mdi:recycle'
         if debugmode :
-            sys.stderr.write("Rubbish and Recycling"+'\n')
+            app.logger.debug(scriptName+": > Collection type is Rubbish and Recycling"+'\n')
     else :
         output['value'] = rubbishDate
         output['collection_type'] = 'Rubbish'
         output['icon'] = 'mdi:trash-can'
         if debugmode :
-            sys.stderr.write("Rubbish"+'\n')
+            app.logger.debug(scriptName+": > Collection type is Rubbish"+'\n')
     
-    # sys.stderr.write(scriptName+': Rubbish collection information successfully fetched\n')
-    
+    app.logger.debug(scriptName+': Rubbish collection information successfully fetched\n')
     return json.dumps(output)
