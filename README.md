@@ -1,5 +1,7 @@
 # rubbish-day
 
+## BECAUSE OF RECENT CHANGES TO THE COUNCIL WEBSITE, THIS NO LONGER WORKS.
+
 `rubbish-day` is a container that runs a single python script that scrapes the Auckland Council website for data about your rubbish collection service. This data can then be consumed by Home Assistant.
 
 Your `AddressID` is found at the end of the URL when you search your address at the [Auckland Council Website](https://www.aucklandcouncil.govt.nz/rubbish-recycling/rubbish-recycling-collections/Pages/rubbish-recycling-collection-days.aspx)
